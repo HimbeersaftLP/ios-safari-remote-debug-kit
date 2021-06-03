@@ -1,4 +1,4 @@
-/* Fix warning symbol being to large */
+/* Fix warning symbol being too large */
 .navigation-bar .item.button > img {
     width: 16px;
 }
