@@ -1,0 +1,9 @@
+/* Fix warning symbol being to large */
+.navigation-bar .item.button > img {
+    width: 16px;
+}
+
+/* Fix "Add New Watch Expression" popover, because it used to use the canvas background */
+.popover {
+    background-color: var(--background-color-tertiary);
+}
