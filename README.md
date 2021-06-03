@@ -52,6 +52,7 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
   - Alternatively you can also press Ctrl+C in the web server window
 
 #### Linux
+
 - Press Ctrl+C in the terminal window to exit
 
 ## Known Issues
@@ -67,6 +68,6 @@ If you want to see details about how this was made, you can read a detailed expl
 ## Attribution
 
 - This project was made possible thanks to
-    - [webkit-webinspector](https://github.com/artygus/webkit-webinspector) for the idea
-    - [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy) for the ios-webkit-debug-proxy tool
-    - [WebKit](https://github.com/WebKit/WebKit) for the WebInspector itself
+  - [webkit-webinspector](https://github.com/artygus/webkit-webinspector) for the idea
+  - [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy) for the ios-webkit-debug-proxy tool
+  - [WebKit](https://github.com/WebKit/WebKit) for the WebInspector itself
