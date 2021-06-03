@@ -9,8 +9,11 @@ The setup scripts (`generate.sh` or `generate.ps1`) download the latest version 
 ## Requirements for running
 
 - [`ios-webkit-debug-proxy`](https://github.com/google/ios-webkit-debug-proxy)
-  - **On Windows you must also install iTunes for it to work**
-- [Node.JS http-server](https://www.npmjs.com/package/http-server) **or** Python **or** php
+  - On Windows, it will automatically be downloaded, but you must **also install iTunes for it to work**
+  - For Linux, please follow the [installation instructions](https://github.com/google/ios-webkit-debug-proxy#linux).
+- [Node.JS http-server](https://www.npmjs.com/package/http-server) **or** [Python](https://www.microsoft.com/store/productId/9P7QFQMJRFP7) **or** [PHP](https://www.php.net/)
+  - If you have Python or PHP on your system, you don't need to change anything
+  - If you have Node.JS on your system, just run `npm i -g http-server` and you're set.
 - A Chromium based browser
   - like Google Chrome, Edge or Opera
 - **or** WebKit based browser
@@ -19,7 +22,7 @@ The setup scripts (`generate.sh` or `generate.ps1`) download the latest version 
 ## Requirements for setup
 
 - `svn` (for `generate.sh`) or `git` (for `generate.ps1`) for downloading WebKit source code
-  - On Windows, I suggest either using [`git` for Windows](https://git-scm.com/download/win) in PowerShell or `svn` in [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+  - On Windows, I suggest using [`git` for Windows](https://git-scm.com/download/win) in PowerShell
   - On Linux, I suggest installing `svn` from your package manager
 
 ## Instructions
@@ -29,16 +32,18 @@ The setup scripts (`generate.sh` or `generate.ps1`) download the latest version 
 1. Clone this repository to your PC
 2. On Windows, run `generate.ps1`. On Linux, run `generate.sh`.
 
+This will result in the folder `WebKit` being created inside `src`. It contains the WebInspector files.
+
 ### Running
 
 1. Plug your iOS device into your PC via USB
 2. On the iOS device, go to `Settings->Safari->Advanced->Web Inspector` and enable it
 3. Open the website you want to debug in Safari
-4. On Windows, run `start.ps1`. On Linux, run `start.sh`
+4. On Windows, run `start.ps1`. On Linux, run `start.sh`.
 5. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
 6. You should be greeted with the WebInspector and can now debug to your heart's content.
 
-### Closing
+### Exiting
 
 #### Windows
 
