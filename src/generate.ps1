@@ -44,5 +44,11 @@ $backendCommandsFile = "$legacyPath/$versionFolder/InspectorBackendCommands.js"
 echo "  -> Choosing file $backendCommandsFile"
 cp $backendCommandsFile $protocolPath
 
+echo "Replacing WebKit only Method Overload"
+$path = 'WebKit/Source/WebInspectorUI/UserInterface/Views/GeneralTreeElement.js'
+$replace = 'this._listItemNode.scrollIntoViewIfNeeded(false);'
+$replaceWith = 'this._listItemNode.scrollIntoViewIfNeeded();'
+(Get-Content $path -Raw) -replace $replace,$replaceWith | Set-Content $path
+
 echo "Finished!"
 pause
