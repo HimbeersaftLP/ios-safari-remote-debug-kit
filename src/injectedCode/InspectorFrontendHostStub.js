@@ -138,7 +138,15 @@ WI.InspectorFrontendHostStub = class InspectorFrontendHostStub {
 
     killText(text, shouldStartNewSequence) {}
 
+    canSave(saveMode) {
+        return false;
+    }
+
     save(url, content, base64Encoded, forceSaveAs) {}
+
+    canPickColorFromScreen() {
+        return false;
+    }
 
     sendMessageToBackend(message) {
         if (!this._socket) {
