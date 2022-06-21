@@ -138,6 +138,10 @@ WI.InspectorFrontendHostStub = class InspectorFrontendHostStub {
 
     killText(text, shouldStartNewSequence) {}
 
+    openURLExternally(url) {
+        window.open(url);
+    }
+
     canSave(saveMode) {
         return false;
     }
