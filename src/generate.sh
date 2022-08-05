@@ -36,7 +36,7 @@ grep -rlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css
 
 echo "Copying InspectorBackendCommands.js for the latest version"
 protocolPath="WebKit/Source/WebInspectorUI/UserInterface/Protocol"
-legacyPath="$protocolPath/Legacy"
+legacyPath="$protocolPath/Legacy/iOS"
 versionFolder="$(ls -1 $legacyPath | sort | tail -n 1)"
 backendCommandsFile="$legacyPath/$versionFolder/InspectorBackendCommands.js"
 echo "  -> Choosing file $backendCommandsFile"
