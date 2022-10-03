@@ -39,7 +39,7 @@ Get-ChildItem -Recurse -Include "*.css" "WebKit/Source/WebInspectorUI/UserInterf
 echo "Copying InspectorBackendCommands.js for the latest version"
 $protocolPath = 'WebKit/Source/WebInspectorUI/UserInterface/Protocol'
 $legacyPath = "$protocolPath/Legacy/iOS"
-$versionFolder = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0]
+$versionFolder = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0].Name
 $backendCommandsFile = "$legacyPath/$versionFolder/InspectorBackendCommands.js"
 echo "  -> Choosing file $backendCommandsFile"
 cp $backendCommandsFile $protocolPath
