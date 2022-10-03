@@ -188,6 +188,10 @@ WI.InspectorFrontendHostStub = class InspectorFrontendHostStub {
         return false;
     }
 
+    engineeringSettingsAllowed() {
+        return false;
+    }
+
     get debuggableInfo() {
         return {
             debuggableType: "web-page",
