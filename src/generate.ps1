@@ -1,3 +1,8 @@
+param (
+    [switch]
+    $NoPause
+)
+
 Write-Output "Entering script directory $PSScriptRoot"
 $previous_working_dir = Get-Location
 cd $PSScriptRoot
@@ -5,7 +10,10 @@ cd $PSScriptRoot
 if (Test-Path -Path WebKit) {
     Write-Output "WebKit folder already exists!"
     Write-Output "Delete it if you want to update your installation."
-    pause
+    cd $previous_working_dir
+    if (-not $NoPause) {
+      pause
+    }
     exit
 }
 
@@ -45,8 +53,10 @@ $backendCommandsFile = "$legacyPath/$versionFolder/InspectorBackendCommands.js"
 Write-Output "  -> Choosing file $backendCommandsFile"
 cp $backendCommandsFile $protocolPath
 
-Write-Output "Restoring working directory $previous_working_dir"
 cd $previous_working_dir
 
 Write-Output "Finished!"
-pause
+
+if (-not $NoPause) {
+  pause
+}
