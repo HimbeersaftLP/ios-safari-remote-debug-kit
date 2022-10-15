@@ -9,7 +9,7 @@ if (Test-Path -Path WebKit) {
 }
 
 echo "Downloading original WebInspector"
-git clone --depth 1 --filter=blob:none --sparse https://github.com/WebKit/WebKit.git
+git clone --depth 1 --filter="blob:none" --sparse "https://github.com/WebKit/WebKit.git"
 cd WebKit
 git sparse-checkout set Source/WebInspectorUI/UserInterface
 cd ..

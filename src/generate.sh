@@ -14,9 +14,10 @@ if [ -d "WebKit" ]; then
 fi
 
 echo "Downloading original WebInspector"
-svn checkout \
-  https://svn.webkit.org/repository/webkit/trunk/Source/WebInspectorUI/UserInterface \
-  WebKit/Source/WebInspectorUI/UserInterface
+git clone --depth 1 --filter="blob:none" --sparse "https://github.com/WebKit/WebKit.git"
+cd WebKit
+git sparse-checkout set Source/WebInspectorUI/UserInterface
+cd ..
 
 echo "Adding additional code"
 cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
