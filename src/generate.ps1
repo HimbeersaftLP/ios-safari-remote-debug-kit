@@ -1,27 +1,65 @@
+<#
+.SYNOPSIS
+  Download WebKit-WebInspector and apply patches.
+
+.LINK
+  Project repository: https://github.com/HimbeersaftLP/ios-safari-remote-debug-kit
+
+.PARAMETER NoPause
+  Do not pause before exiting script (for usage outside of launching the script from a GUI file explorer)
+
+.PARAMETER FetchWebInspector
+  Default: Download WebKit-WebInspector if it is not already downloaded, else exit.
+  True:    Force download WebKit-WebInspector, even if it is already downloaded (for updating)
+  False:   Never download WebKit-WebInspector, only apply patches to an already downloaded one
+#>
+[CmdletBinding(PositionalBinding=$false)]
 param (
-    [switch]
-    $NoPause
+    [Parameter()]
+    [ValidateSet($null, $true, $false)]
+    [object] $FetchWebInspector = $null,
+    [Parameter()]
+    [switch] $NoPause
 )
+
+$ErrorActionPreference = "Stop"
 
 Write-Output "Entering script directory $PSScriptRoot"
 $previous_working_dir = Get-Location
 cd $PSScriptRoot
 
-if (Test-Path -Path WebKit) {
-    Write-Output "WebKit folder already exists!"
-    Write-Output "Delete it if you want to update your installation."
-    cd $previous_working_dir
-    if (-not $NoPause) {
-      pause
+if ($FetchWebInspector -eq $true -or $FetchWebInspector -eq $null) {
+  if (Test-Path -Path WebKit) {
+    if ($null -eq $FetchWebInspector) {
+        Write-Output "WebKit folder already exists!"
+        Write-Output 'Run with "-FetchWebInspector $true" to force an update.'
+        cd $previous_working_dir
+        if (-not $NoPause) {
+          pause
+        }
+        exit 1
+    } else {
+      Write-Output "The folder $((Get-Item WebKit).FullName) and all its content will be erased"
+      $confirm_response = ""
+      while ($confirm_response -ne "y" -and $confirm_response -ne "n") {
+        $confirm_response = Read-Host -Prompt "Confirm? (y/n)"
+      }
+      if ($confirm_response -eq "y") {
+        Remove-Item -Recurse -Force WebKit
+      } else {
+        Write-Output "Cannot continue if the folder is not deleted! Exiting."
+        cd $previous_working_dir
+        exit 1
+      }
     }
-    exit
-}
+  }
 
-Write-Output "Downloading original WebInspector"
-git clone --depth 1 --filter="blob:none" --sparse "https://github.com/WebKit/WebKit.git"
-cd WebKit
-git sparse-checkout set Source/WebInspectorUI/UserInterface
-cd ..
+  Write-Output "Downloading original WebInspector"
+  git clone --depth 1 --filter="blob:none" --sparse "https://github.com/WebKit/WebKit.git"
+  cd WebKit
+  git sparse-checkout set Source/WebInspectorUI/UserInterface
+  cd ..
+}
 
 Write-Output "Adding additional code"
 cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
