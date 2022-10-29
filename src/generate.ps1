@@ -91,7 +91,7 @@ Get-ChildItem -Recurse -Include "*.css" "WebKit/Source/WebInspectorUI/UserInterf
 Write-Output "Select iOS version for InspectorBackendCommands.js"
 $protocolPath = 'WebKit/Source/WebInspectorUI/UserInterface/Protocol'
 $legacyPath = "$protocolPath/Legacy/iOS"
-$possibleVersions = (Get-ChildItem $legacyPath).Name
+$possibleVersions = (Get-ChildItem $legacyPath | Sort-Object Name).Name
 $latestVersion = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0].Name
 if ($iOSVersion -eq "") {
   $selectedVersion = $null
