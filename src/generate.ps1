@@ -12,6 +12,9 @@
   Default: Download WebKit-WebInspector if it is not already downloaded, else exit.
   True:    Force download WebKit-WebInspector, even if it is already downloaded (for updating)
   False:   Never download WebKit-WebInspector, only apply patches to an already downloaded one
+
+.PARAMETER iOSVersion
+  Select iOS version for InspectorBackendCommands.js
 #>
 [CmdletBinding(PositionalBinding=$false)]
 param (
@@ -19,7 +22,9 @@ param (
     [ValidateSet($null, $true, $false)]
     [object] $FetchWebInspector = $null,
     [Parameter()]
-    [switch] $NoPause
+    [switch] $NoPause,
+    [Parameter()]
+    [string] $iOSVersion = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -83,11 +88,33 @@ Get-ChildItem -Recurse -Include "*.css" "WebKit/Source/WebInspectorUI/UserInterf
     ($_ | Get-Content -Raw) -replace ':matches',':is' | Set-Content $_.Path
   }
 
-Write-Output "Copying InspectorBackendCommands.js for the latest version"
+Write-Output "Select iOS version for InspectorBackendCommands.js"
 $protocolPath = 'WebKit/Source/WebInspectorUI/UserInterface/Protocol'
 $legacyPath = "$protocolPath/Legacy/iOS"
-$versionFolder = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0].Name
-$backendCommandsFile = "$legacyPath/$versionFolder/InspectorBackendCommands.js"
+$possibleVersions = (Get-ChildItem $legacyPath).Name
+$latestVersion = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0].Name
+if ($iOSVersion -eq "") {
+  $selectedVersion = $null
+  while ((-not $possibleVersions.Contains($selectedVersion)) -and $selectedVersion -ne "") {
+    $selectedVersion = Read-Host -Prompt "Choose iOS version (possible options: $($possibleVersions -join ", ")) Default: latest ($latestVersion)"
+  }
+} else {
+  if ((-not $possibleVersions.Contains($iOSVersion)) -and $iOSVersion -ne "latest") {
+    Write-Output "Invalid iOS version ($iOSVersion) provided! Allowed options: $($possibleVersions -join ", "), latest. Exiting."
+    cd $previous_working_dir
+    exit 1
+  }
+  if ($iOSVersion -eq "latest") {
+    $selectedVersion = ""
+  } else {
+    $selectedVersion = $iOSVersion
+  }
+}
+if ($selectedVersion -eq "") {
+  $selectedVersion = $latestVersion
+}
+Write-Output "Copying InspectorBackendCommands.js for iOS $selectedVersion"
+$backendCommandsFile = "$legacyPath/$selectedVersion/InspectorBackendCommands.js"
 Write-Output "  -> Choosing file $backendCommandsFile"
 cp $backendCommandsFile $protocolPath
 
