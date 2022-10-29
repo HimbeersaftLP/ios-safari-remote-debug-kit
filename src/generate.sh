@@ -101,7 +101,7 @@ sed -i -e ':a' -e 'N' -e '$!ba' \
   WebKit/Source/WebInspectorUI/UserInterface/Base/Main.js
 
 echo "Replacing :matches with :is in CSS"
-if grep -rlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css'; then
+if grep -qrlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css'; then
   grep -rlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css' | xargs -0 sed -i 's/:matches/:is/g'
 fi
 
