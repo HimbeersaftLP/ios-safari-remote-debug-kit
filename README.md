@@ -41,7 +41,14 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 3. Open the website you want to debug in Safari
 4. On Windows, run `start.ps1`. On Linux, run `start.sh`.
 5. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
+    - If you have mutliple pages open or extensions installed, refer to [http://localhost:9222/](http://localhost:9222/) for the page number that is at the end of the URL
 6. You should be greeted with the WebInspector and can now debug to your heart's content.
+
+### Troubleshooting
+
+- If you get an error like `Uncaught (in promise) Error: 'Browser' domain was not found` from `Connection.js:162` you are trying to inspect a page that is not inspectable  (this could be caused by having Safari extensions installed). Refer to [http://localhost:9222/](http://localhost:9222/) for the available pages and put the correct one at the end of the URL (for example [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/2`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/2)) for inspecting the second page.
+- In case your inspector window stays empty, open the dev tools of your local browser to check the console for errors.
+  - If you get an error like `WebSocket connection to 'ws://localhost:9222/devtools/page/1' failed:` from `InspectorFrontendHostStub.js:68`, try unplugging your device and plugging it back in while the site you want to debug is open in Safari. Once you see the ios-webkit-debug-proxy console window display a message like `Connected :9222 to Himbeers iPad (...)`, refresh the inspector page inside your browser (do not use the refresh button on the inspector page, refresh the entire site from your browser).
 
 ### Exiting
 
