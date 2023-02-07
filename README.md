@@ -2,7 +2,7 @@
 
 Using this project you can debug your websites and web applications running in iOS Safari from a PC running Windows or Linux.
 
-It provides a free and up-to-date alternative to the discontinued [remotedebug-ios-webkit-adapter by RemoteDebug](https://github.com/RemoteDebug/remotedebug-ios-webkit-adapter) and is the spiritual successor to the abandoned [webkit-webinspector by Arty Gus](https://github.com/artygus/webkit-webinspector).
+It provides a free and up-to-date alternative to the discontinued [remotedebug-ios-webkit-adapter by RemoteDebug](https://github.com/RemoteDebug/remotedebug-ios-webkit-adapter) and is the spiritual successor to the abandoned [webkit-webinspector by Arty Gus](https://github.com/artygus/webkit-webinspector). It is a free and open source alternative to inspect.dev.
 
 The setup scripts (`generate.sh` or `generate.ps1`) download the latest version of WebKit's built-in WebInspector and patch it to work with the WebSocket `ios-webkit-debug-proxy` provides and to be compatible with Chromium based browsers.
 
@@ -21,9 +21,9 @@ The setup scripts (`generate.sh` or `generate.ps1`) download the latest version 
 
 ## Requirements for setup
 
-- `svn` (for `generate.sh`) or `git` (for `generate.ps1`) for downloading WebKit source code
+- `git` (required by `generate.sh` or `generate.ps1`) for downloading WebKit source code
   - On Windows, I suggest using [`git` for Windows](https://git-scm.com/download/win) in PowerShell
-  - On Linux, I suggest installing `svn` from your package manager
+  - On Linux, I suggest installing `git` from your package manager
 
 ## Instructions
 
@@ -63,7 +63,7 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 
 ## Notes
 
-If you want to see details about how this was made, you can read a detailed explanation in [`HOW_IT_WORKS.md`](https://github.com/HimbeersaftLP/ios-safari-remote-debug-kit/blob/master/HOW_IT_WORKS.md).
+If you want to see details about how this was made, you can read a detailed explanation in [`HOW_IT_WORKS.md`](https://github.com/HimbeersaftLP/ios-safari-remote-debug-kit/blob/master/HOW_IT_WORKS.md) (note that this document only describes how the very first version of this tool was created and might not be completely up-to-date).
 
 ## Attribution
 
