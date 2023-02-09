@@ -214,6 +214,14 @@ WI.InspectorFrontendHostStub = class InspectorFrontendHostStub {
         return true;
     }
 
+    getCurrentX(context) { }
+
+    getCurrentY(context) { }
+
+    getPath(context) { }
+
+    setPath(context, path2d) { }
+
     // Private
 
     _sendPendingMessagesToBackendIfNeeded() {
