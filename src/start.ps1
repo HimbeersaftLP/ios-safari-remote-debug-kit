@@ -14,9 +14,19 @@ if (!$noServer -and !(Test-Path -Path WebKit)) {
 
 $debugProxyPath = "ios-webkit-debug-proxy"
 $debugProxyExe = ".\" + $debugProxyPath + "\ios_webkit_debug_proxy.exe"
-if (!(Test-Path -Path $debugProxyExe -PathType Leaf)) {
-    echo "ios-webkit-debug-proxy not found, downloading it..."
-    $debugProxyUrl = "https://github.com/google/ios-webkit-debug-proxy/releases/download/v1.8.8/ios-webkit-debug-proxy-1.8.8-win64-bin.zip"
+$shouldDownloadDebugProxy = $True
+if (Test-Path -Path $debugProxyExe -PathType Leaf) {
+    $debugProxyVersion = (& $debugProxyExe --version)
+    if ($debugProxyVersion.Contains("ios_webkit_debug_proxy 1.8.8")) {
+        echo "ios-webkit-debug-proxy is outdated, a newer version will be downloaded!"
+        Rename-Item $debugProxyPath "ios-webkit-debug-proxy-1.8.8"
+    } else {
+        $shouldDownloadDebugProxy = $False
+    }
+}
+if ($shouldDownloadDebugProxy) {
+    echo "ios-webkit-debug-proxy not found or outdated, downloading it..."
+    $debugProxyUrl = "https://github.com/google/ios-webkit-debug-proxy/releases/download/v1.9.0/ios-webkit-debug-proxy-1.9.0-win64-bin.zip"
     $debugProxyZip = "ios-webkit-debug-proxy.zip"
     Invoke-WebRequest $debugProxyUrl -OutFile $debugProxyZip
     Expand-Archive $debugProxyZip -DestinationPath $debugProxyPath
