@@ -53,7 +53,20 @@ $jobBlock = {
     echo ""
 
     echo "Searching web server"
-    if (Get-Command "python3.exe" -ErrorAction SilentlyContinue) {
+    $pythonCmd = "python3.exe"
+    $pythonInstalled = $false
+    # Complicated workaround to detect if Python 3 is actually installed or if it will just open the store
+    if (Get-Command $pythonCmd -ErrorAction SilentlyContinue) {
+        $storeAppAliasPath = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData) + "\Microsoft\WindowsApps\"
+        if ((Get-Command $pythonCmd).Source.StartsWith($storeAppAliasPath)) {
+            if ((Get-AppxPackage -Publisher "CN=4975D53F-AA7E-49A5-8B49-EA4FDC1BB66B").Count -ne 0) {
+                $pythonInstalled = $true
+            }
+        } else {
+            $pythonInstalled = $true
+        }
+    }
+    if ($pythonInstalled) {
         echo "Found Python 3, using it to serve the WebInspector"
         python3.exe -m http.server $PORT --bind $SRV_HOST --directory $DIR 2>&1 | Out-Null
     } elseif (Get-Command "php.exe" -ErrorAction SilentlyContinue) {
