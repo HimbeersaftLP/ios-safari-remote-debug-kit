@@ -15,7 +15,7 @@ if [ "$1" != "-noServer" ] && [ ! -d "WebKit" ]; then
   exit
 fi
 
-DEBUG_PROXY_EXE="ios-webkit-debug-proxy"
+DEBUG_PROXY_EXE="ios_webkit_debug_proxy"
 
 if [ "$1" != "-noServer" ]; then
   echo "Running ios-webkit-debug-proxy..."
