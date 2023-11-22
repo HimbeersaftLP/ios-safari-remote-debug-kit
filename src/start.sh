@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -8,7 +8,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "Entering script directory $SCRIPT_DIR"
 cd $SCRIPT_DIR
 
-if [ "$1" != "-noServer" ] && [ ! -d "WebKit" ]; then
+arg="${1:-}"
+shift || true
+
+if [ "$arg" != "-noServer" ] && [ ! -d "WebKit" ]; then
   echo "WebKit folder doesn't exists!"
   echo "Run 'generate.sh' to get the needed files."
   read -p "Press enter to close this window!"
@@ -17,7 +20,7 @@ fi
 
 DEBUG_PROXY_EXE="ios_webkit_debug_proxy"
 
-if [ "$1" != "-noServer" ]; then
+if [ "$arg" != "-noServer" ]; then
   echo "Running ios-webkit-debug-proxy..."
   $DEBUG_PROXY_EXE --no-frontend &
 
