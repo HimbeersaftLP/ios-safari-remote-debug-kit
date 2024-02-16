@@ -9,7 +9,7 @@ The setup scripts (`generate.sh` or `generate.ps1`) download the latest version 
 ## Requirements for running
 
 - [`ios-webkit-debug-proxy`](https://github.com/google/ios-webkit-debug-proxy)
-  - On Windows, it will automatically be downloaded, but you must **also install iTunes for it to work**
+  - On Windows, it will automatically be downloaded, but you must **also install and trust the device in iTunes for it to work**
   - For Linux, please follow the [installation instructions](https://github.com/google/ios-webkit-debug-proxy#linux).
 - [Node.JS http-server](https://www.npmjs.com/package/http-server) **or** [Python](https://www.microsoft.com/store/productId/9P7QFQMJRFP7) **or** [PHP](https://www.php.net/)
   - If you have Python or PHP on your system, you don't need to change anything
@@ -37,12 +37,15 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 ### Running
 
 1. Plug your iOS device into your PC via USB
-2. On the iOS device, go to `Settings->Safari->Advanced->Web Inspector` and enable it
-3. Open the website you want to debug in Safari
-4. On Windows, run `start.ps1`. On Linux, run `start.sh`.
-5. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
+2. On Windows, open iTunes and mark the iOS device as trusted (pop-up asks for confirmation the first time you connect a new device)
+3. On the iOS device, confirm that you trust the connection if asked
+4. Go to `Settings->Safari->Advanced->Web Inspector` and enable it
+5. Open the website you want to debug in Safari
+6. On Windows, run `start.ps1`. On Linux, run `start.sh`. Make sure your iOS device's screen is unlocked.
+7. The `ios-webkit-debug-proxy` will show your iOS device's name as connected.
+8. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
     - If you have mutliple pages open or extensions installed, refer to [http://localhost:9222/](http://localhost:9222/) for the page number that is at the end of the URL
-6. You should be greeted with the WebInspector and can now debug to your heart's content.
+9. You should be greeted with the WebInspector and can now debug to your heart's content.
 
 ### Troubleshooting
 
