@@ -53,7 +53,7 @@ done
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 echo "Entering script directory $SCRIPT_DIR"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 
 if [ "${DO_FETCH}" != "false" ]; then
   

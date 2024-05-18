@@ -6,7 +6,7 @@ set -euo pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 echo "Entering script directory $SCRIPT_DIR"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 
 arg="${1:-}"
 shift || true
