@@ -3,11 +3,13 @@
 )
 
 echo "Entering script directory $PSScriptRoot"
+$previous_working_dir = Get-Location
 cd $PSScriptRoot
 
 if (!$noServer -and !(Test-Path -Path WebKit)) {
     echo "WebKit folder doesn't exists!"
     echo "Run 'generate.sh' to get the needed files."
+    cd $previous_working_dir
     pause
     exit
 }
@@ -82,12 +84,14 @@ $jobBlock = {
             http-server.ps1 -a $SRV_HOST -p $PORT $DIR 2>&1 | Out-Null
         } else {
             echo "Found Node.JS and NPM, but not http-server. You can install it using 'npm i -g http-server'"
+            cd $previous_working_dir
             pause
             exit
         }
     } else {
         echo "No compatible web server found!"
         echo "Please either install Python 3, PHP or Node.JS or run with the argument -noServer and use one of your choice."
+        cd $previous_working_dir
         pause
         exit
     }
@@ -128,3 +132,5 @@ if (!$noServer) {
 } else {
     echo "Running without web server"
 }
+
+cd $previous_working_dir
