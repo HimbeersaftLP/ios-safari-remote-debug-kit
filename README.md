@@ -6,6 +6,8 @@ It provides a free and up-to-date alternative to the discontinued [remotedebug-i
 
 The setup scripts (`generate.sh` or `generate.ps1`) download the latest version of WebKit's built-in WebInspector and patch it to work with the WebSocket `ios-webkit-debug-proxy` provides and to be compatible with Chromium based browsers.
 
+**If you are looking for a more modern, self-contained tool built in Go**, check out [Hazel's ios-safari-remote-debug](https://git.gay/besties/ios-safari-remote-debug).
+
 ## Requirements for running
 
 - [`ios-webkit-debug-proxy`](https://github.com/google/ios-webkit-debug-proxy)
