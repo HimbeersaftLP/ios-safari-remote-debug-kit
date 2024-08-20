@@ -290,4 +290,10 @@ if (!window.InspectorFrontendHost) {
             }
         }
     }
+
+    if (!window.Float16Array) {
+        window.Float16Array = function() {
+            console.error("Float16Array not implemented");
+        }
+    }
 }
