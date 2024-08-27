@@ -32,8 +32,8 @@ if [ "$arg" != "-noServer" ]; then
     killall $DEBUG_PROXY_EXE
   }
 
-  HOST="localhost"
-  PORT="8080"
+  HOST="${HOST:-localhost}"
+  PORT="${PORT:-8080}"
   DIR="WebKit/Source/WebInspectorUI/UserInterface/"
 
   echo ""
