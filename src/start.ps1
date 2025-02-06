@@ -124,7 +124,7 @@ if (!$noServer) {
 
         if (!$debugProxyProc.HasExited) {
             echo "Quitting ios-webkit-debug-proxy..."
-            $debugProxyProc.CloseMainWindow() | Out-Null
+            $debugProxyProc.Kill() | Out-Null
         }
 
         echo "Goodbye!"
