@@ -1,15 +1,3 @@
-// Make it not crash on Chrome when trying to render windows with shadow
-// Ideally you'd use a proper polyfill
-// https://stackoverflow.com/a/3433039/
-if (!Document.prototype.getCSSCanvasContext) {
-    Document.prototype.getCSSCanvasContext = function (contextType, identifier, width, height) {
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        return canvas.getContext(contextType);
-    };
-}
-
 // Make it not crash on Chrome when trying to click an Element
 // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/getPropertyCSSValue
 if (!CSSStyleDeclaration.prototype.getPropertyCSSValue) {
