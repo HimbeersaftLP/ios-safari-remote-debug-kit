@@ -95,11 +95,6 @@ sed -i -e ':a' -e 'N' -e '$!ba' \
   -e 's/<script src="Base\/WebInspector.js"><\/script>\r\{0,1\}\n/<script src="Base\/WebInspector.js"><\/script><script src="InspectorFrontendHostStub.js"><\/script><link rel="stylesheet" href="AdditionalStyle.css">/g' \
   WebKit/Source/WebInspectorUI/UserInterface/Main.html
 
-echo "Replacing :matches with :is in CSS"
-if grep -qrlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css'; then
-  grep -rlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css' | xargs -0 sed -i 's/:matches/:is/g'
-fi
-
 echo "Select iOS version for InspectorBackendCommands.js"
 protocolPath="WebKit/Source/WebInspectorUI/UserInterface/Protocol"
 legacyPath="${protocolPath}/Legacy/iOS"
