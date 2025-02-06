@@ -92,7 +92,7 @@ cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
 
 echo "Referencing additional code in HTML"
 sed -i -e ':a' -e 'N' -e '$!ba' \
-  -e 's/<script src="WebKitAdditions\/WebInspectorUI\/WebInspectorUIAdditions.js"><\/script>\r\{0,1\}\n/<script src="Base\/WebInspector.js"><\/script><script src="AdditionalJavaScript.js"><\/script><link rel="stylesheet" href="AdditionalStyle.css">/g' \
+  -e 's/<script src="WebKitAdditions\/WebInspectorUI\/WebInspectorUIAdditions.js"><\/script>\r\{0,1\}\n/<script src="WebKitAdditions\/WebInspectorUI\/WebInspectorUIAdditions.js"><\/script><script src="AdditionalJavaScript.js"><\/script><link rel="stylesheet" href="AdditionalStyle.css">/g' \
   WebKit/Source/WebInspectorUI/UserInterface/Main.html
 
 echo "Select iOS version for InspectorBackendCommands.js"
