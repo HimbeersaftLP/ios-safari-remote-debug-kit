@@ -95,11 +95,6 @@ sed -i -e ':a' -e 'N' -e '$!ba' \
   -e 's/<script src="Base\/WebInspector.js"><\/script>\r\{0,1\}\n/<script src="Base\/WebInspector.js"><\/script><script src="InspectorFrontendHostStub.js"><\/script><link rel="stylesheet" href="AdditionalStyle.css">/g' \
   WebKit/Source/WebInspectorUI/UserInterface/Main.html
 
-echo "Adding WebSocket init to Main.js"
-sed -i -e ':a' -e 'N' -e '$!ba' \
-  -e 's/WI.loaded = function()\r\{0,1\}\n{/WI.loaded = function() { WI._initializeWebSocketIfNeeded();/g' \
-  WebKit/Source/WebInspectorUI/UserInterface/Base/Main.js
-
 echo "Replacing :matches with :is in CSS"
 if grep -qrlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css'; then
   grep -rlZ ':matches' WebKit/Source/WebInspectorUI/UserInterface --include='*.css' | xargs -0 sed -i 's/:matches/:is/g'

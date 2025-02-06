@@ -75,12 +75,6 @@ $replace = '<script src="Base/WebInspector.js"></script>'
 $replaceWith = $replace + '<script src="InspectorFrontendHostStub.js"></script><link rel="stylesheet" href="AdditionalStyle.css">'
 (Get-Content $path -Raw) -replace "$replace\r?\n",$replaceWith | Set-Content -NoNewline $path
 
-Write-Output "Adding WebSocket init to Main.js"
-$path = 'WebKit/Source/WebInspectorUI/UserInterface/Base/Main.js'
-$replace = 'WI.loaded = function\(\)\r?\n{'
-$replaceWith = 'WI.loaded = function() { WI._initializeWebSocketIfNeeded();'
-(Get-Content $path -Raw) -replace $replace,$replaceWith | Set-Content -NoNewline $path
-
 Write-Output "Replacing :matches with :is in CSS"
 Get-ChildItem -Recurse -Include "*.css" "WebKit/Source/WebInspectorUI/UserInterface" | `
   Select-String ':matches' -List | `
