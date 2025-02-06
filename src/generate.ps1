@@ -72,7 +72,7 @@ cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
 Write-Output "Referencing additional code in HTML"
 $path = 'WebKit/Source/WebInspectorUI/UserInterface/Main.html'
 $replace = '<script src="Base/WebInspector.js"></script>'
-$replaceWith = $replace + '<script src="InspectorFrontendHostStub.js"></script><link rel="stylesheet" href="AdditionalStyle.css">'
+$replaceWith = $replace + '<script src="AdditionalJavaScript.js"></script><link rel="stylesheet" href="AdditionalStyle.css">'
 (Get-Content $path -Raw) -replace "$replace\r?\n",$replaceWith | Set-Content -NoNewline $path
 
 Write-Output "Select iOS version for InspectorBackendCommands.js"
