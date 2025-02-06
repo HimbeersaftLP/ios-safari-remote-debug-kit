@@ -71,7 +71,7 @@ cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
 
 Write-Output "Referencing additional code in HTML"
 $path = 'WebKit/Source/WebInspectorUI/UserInterface/Main.html'
-$replace = '<script src="Base/WebInspector.js"></script>'
+$replace = '<script src="WebKitAdditions/WebInspectorUI/WebInspectorUIAdditions.js"></script>'
 $replaceWith = $replace + '<script src="AdditionalJavaScript.js"></script><link rel="stylesheet" href="AdditionalStyle.css">'
 (Get-Content $path -Raw) -replace "$replace\r?\n",$replaceWith | Set-Content -NoNewline $path
 
