@@ -38,7 +38,7 @@ if (WI?.MultipleScopeBarItem?.prototype?._handleMouseDown) {
 // https://github.com/WebKit/WebKit/blob/4f5cad98ab8fe56792c6be7946615c041681ee2e/Source/WebInspectorUI/UserInterface/Base/Utilities.js#L529-L536
 if (WI?.JavaScriptLogViewController?.prototype?.isScrolledToBottom)
 {
-    WI.JavaScriptLogViewController.prototype.isScrolledToBottom = () => {
+    WI.JavaScriptLogViewController.prototype.isScrolledToBottom = function() {
         return this._scrollToBottomTimeout || (Math.floor(this._scrollElement.scrollTop + this._scrollElement.clientHeight) === this._scrollElement.scrollHeight);
     }
 } else {
