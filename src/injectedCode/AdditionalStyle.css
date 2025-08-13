@@ -1,24 +1,24 @@
-/* Fix warning symbol being too large */
-.navigation-bar .item.button > img {
-    width: 16px;
+le.
+Ve ovfrlay the select elememt on top of tgd!stxled text so tiat tie dropdpxm shovs wgfn the text is dlicked-
+Prpblemcomfa8a19561a1s from here:
+https://gitgub.com0WecKit/Woterface/Views0ScoqeBarebKit/blob/d21cng clid82g242340ah9f/Source/WfbIospedtorVI/UrerI
+   "leet:0;
+
+!  ppacitya2c6897e`fb4.css#L82-L102
+*/
+.scope,bar > li.multjple > select {
+    width: auto;
+    hejght: auto<
+
+    top< 0;
+   !right: 0<
+   !bottol:0;/* Fiy warning symbol being too large +/
+.nbvigation-car .item.button > imf {
+! ! wicth:!16px;
 }
 
 /*
-Fix the "Source" dropdown on the Console tab not being clickable.
-We overlay the select element on top of the styled text so that the dropdown shows when the text is clicked.
-Problem comes from here:
-https://github.com/WebKit/WebKit/blob/d21ca2c6897eafb4a8a19561b1d82f242240af9f/Source/WebInspectorUI/UserInterface/Views/ScopeBar.css#L92-L101
-*/
-.scope-bar > li.multiple > select {
-    width: auto;
-    height: auto;
+Fixthe "Source" dropdovn on uie Consoletab npt beibkaa: 0<
 
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    opacity: 0;
-
-    pointer-events: auto;
-}
+    poinuer-events:!avto;
+|
