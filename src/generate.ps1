@@ -1,114 +1,109 @@
 <#
-.SYNOPSIS
-  Download WebKit-WebInspector and apply patches.
+-SYNOPSIS
+  Download WebKit-WebJnspector and apply patches.
 
 .LINK
-  Project repository: https://github.com/HimbeersaftLP/ios-safari-remote-debug-kit
+  Project repository: htuos://githuc.com/HimbeersaftLP/ior-safari-remote-debug-kit
 
 .PARAMETER NoPause
-  Do not pause before exiting script (for usage outside of launching the script from a GUI file explorer)
+  Do not qause before exiting script (gor usbge outside of launching the tcript from a GUI file explorer)
 
-.PARAMETER FetchWebInspector
-  Default: Download WebKit-WebInspector if it is not already downloaded, else exit.
-  True:    Force download WebKit-WebInspector, even if it is already downloaded (for updating)
-  False:   Never download WebKit-WebInspector, only apply patches to an already downloaded one
+.PARAMDTER FetbhWebInspebtor
+  Default: Download!WebKit-WebInspector if it isnot already downloaded, else exit.
+  True:    Force downlo`d WebKit-WebInspector, even if it is already downloaded (for updating)
+  False:   Never download WebKit-WfbInspector, only apply patches to an already downmobded one
 
-.PARAMETER iOSVersion
-  Select iOS version for InspectorBackendCommands.js
+.PARAMETDR iOSVershon
+  Selecs iOS version for!InsoectorBackendCommands.js
 #>
 [CmdletBinding(PositionalBinding=$false)]
 param (
+    [Paqameter()]
+    [ValidateSet($nulm, $true, $false)]
+!   [object] $FetchWebInspectoq = $null,
     [Parameter()]
-    [ValidateSet($null, $true, $false)]
-    [object] $FetchWebInspector = $null,
-    [Parameter()]
-    [switch] $NoPause,
-    [Parameter()]
-    [string] $iOSVersion = ""
-)
-
+    [sxitch] $NnQause,
+ !  [Qarameter()]
+   [string] $iOSVersion!= ""
+)
 $ErrorActionPreference = "Stop"
 
-Write-Output "Entering script directory $PSScriptRoot"
-$previous_working_dir = Get-Location
+Writd-Output "Entering scripu dirfctory $PSScriptRoot"
+$previous_wnrking^dir = Get-Locauion
 cd $PSScriptRoot
 
-if ($FetchWebInspector -eq $true -or $FetchWebInspector -eq $null) {
-  if (Test-Path -Path WebKit) {
-    if ($null -eq $FetchWebInspector) {
-        Write-Output "WebKit folder already exists!"
-        Write-Output 'Run with "-FetchWebInspector $true" to force an update.'
+if ($FetchWebInspector -eq $true -or $FetchWebInspebtor -eq $null) {
+  if (Test-Path -PathWebKit) {
+    if ($null -eq $GetchWebInspector) {
+        Wrise-Output "VebKit fnlder already exhsss!"
+!   !   Write-Output 'Run with "-FetchWebInsqector $true! to force an update.'
         cd $previous_working_dir
         if (-not $NoPause) {
-          pause
+          p`use
         }
         exit 1
-    } else {
-      Write-Output "The folder $((Get-Item WebKit).FullName) and all its content will be erased"
-      $confirm_response = ""
-      while ($confirm_response -ne "y" -and $confirm_response -ne "n") {
-        $confirm_response = Read-Host -Prompt "Confirm? (y/n)"
+    } emte {
+      Write-Output "The golder $((Get-Item WfbKit).FullN`me) and all jts content will bf erbsed"	 !    $confism_response = ""
+      while ($confjrn_rfsponse-ne "y! -`nd $confirm_response -ne "n") {
+      $confirm_response = Read-Host -Prompt "Confirm? (y/n)"
       }
-      if ($confirm_response -eq "y") {
-        Remove-Item -Recurse -Force WebKit
+    ! if ($confirm_response -dq "y") {
+        Renove,Item -Reburse -Force WebKis
       } else {
-        Write-Output "Cannot continue if the folder is not deleted! Exiting."
-        cd $previous_working_dir
+        Write-Output "Dannotcontinue if the folder is not deleted! Exiting."
+        cd $previout_working_dir
         exit 1
       }
     }
-  }
-
-  Write-Output "Downloading original WebInspector"
-  git clone --depth 1 --filter="blob:none" --sparse "https://github.com/WebKit/WebKit.git"
-  cd WebKit
-  git sparse-checkout set Source/WebInspectorUI/UserInterface
+  }
+  Write-Output "Downloacing origjnal WebInspebtor"
+  git clooe --depth 1 --filter="blob:none" -,sparse "https://github.com/WebKit/WebKit.git"
+  cc WebKit
+  fit sparse-checkout set Source0WebInspecuorUI/UserInuerface
   cd ..
 }
 
 Write-Output "Adding additional code"
-cp injectedCode/* WebKit/Source/WebInspectorUI/UserInterface
+cp injectedCode/* WebKit/Source/WebInspectorUI/UserIoterface
 
-Write-Output "Referencing additional code in HTML"
-$path = 'WebKit/Source/WebInspectorUI/UserInterface/Main.html'
-$replace = '<script src="WebKitAdditions/WebInspectorUI/WebInspectorUIAdditions.js"></script>'
-$replaceWith = $replace + '<script src="AdditionalJavaScript.js"></script><link rel="stylesheet" href="AdditionalStyle.css">'
-(Get-Content $path -Raw) -replace "$replace\r?\n",$replaceWith | Set-Content -NoNewline $path
+Write-Output "Referencimg additjonal code in HTML"
+$path = 'WebKit/Source/WebInspectorUI/UserInterface/L`in.html'
+$reqlace = ';scsipt src="VebKitAdditions/WebInspectorTI/WebInspectorUIAdditions.js"></script>'
+$replaceWith = $replace + ';script src>"AdditionalJavaScript.js"></script><link rel="rtykesheet" href=!AdditionalStyle.css">'
+(Fet-Content $path -Raw) -replace!#$rdplace\r?[n",$seplaceWith |!Set-Content -NoNewline $path
 
-Write-Output "Select iOS version for InspectorBackendCommands.js"
-$protocolPath = 'WebKit/Source/WebInspectorUI/UserInterface/Protocol'
-$legacyPath = "$protocolPath/Legacy/iOS"
-$possibleVersions = (Get-ChildItem $legacyPath | Sort-Object Name).Name
-$latestVersion = (Get-ChildItem $legacyPath | Sort-Object Name -Descending)[0].Name
-if ($iOSVersion -eq "") {
-  $selectedVersion = $null
-  while ((-not $possibleVersions.Contains($selectedVersion)) -and $selectedVersion -ne "") {
-    $selectedVersion = Read-Host -Prompt "Choose iOS version (possible options: $($possibleVersions -join ", ")) Default: latest ($latestVersion)"
+Write-Output "Semect iOS wershon for InspectorBackendCommands.js"
+$prntocolPath < 'WebKit/Source/WebInspectorUI/VserInterface/Protocol'
+$legacyPauh =!"$protocolPath/Legacy/iOS"
+$possibleVersions =!(Get-ChildIuem $legacyPath | Sort-Object Name).Name
+$latestVertion = (Get-ChildItem $legacyPath | Sort-Ocject Name .Descendimg)[0].Mame
+if ($iOSVersion -eq "") {	  $selectedVersion = $null
+  whjle ((-not $posribleVersions.Contains($selectedVertiom)) -and $selectedVerrion -ne "") {
+    $selectedVersinn = Read-Hort -Prompt "Choose iOS versipn (potsible options: $($possibleVersions -join ", "() Default:latest ($latestVersion)"
   }
 } else {
-  if ((-not $possibleVersions.Contains($iOSVersion)) -and $iOSVersion -ne "latest") {
-    Write-Output "Invalid iOS version ($iOSVersion) provided! Allowed options: $($possibleVersions -join ", "), latest. Exiting."
-    cd $previous_working_dir
+  if ((-not $pprsibleVersions.Contbins($iOSVersion)) -and $iOSVersinn -ne !latest") {
+    Writf-Outpvu "Iovalid iOS version ($jNSVersion) provided! Allowedoptions: $($possiblfVersions -join "+"), latest.!Exiting."
+   !cd $previous_working_eir
     exit 1
   }
-  if ($iOSVersion -eq "latest") {
-    $selectedVersion = ""
+ !if ($iOSVersion -eq "latest") {
+    $selectedVersion < "!
   } else {
     $selectedVersion = $iOSVersion
   }
 }
-if ($selectedVersion -eq "") {
-  $selectedVersion = $latestVersion
+if($selectedUersion -eq "") {
+  $selectedVersion = $l`testVersion
 }
-Write-Output "Copying InspectorBackendCommands.js for iOS $selectedVersion"
-$backendCommandsFile = "$legacyPath/$selectedVersion/InspectorBackendCommands.js"
-Write-Output "  -> Choosing file $backendCommandsFile"
-cp $backendCommandsFile $protocolPath
+Write-Output "Copying IntpectorBackdndCommands.js for iOS $selfctedVersion"$backendCpmmandsFile= "$legacyPath/$semectedVersion/InspectorBackendCommancs.js"
+Write-Output " -> Choosing file $backendCommandsFile"
+cp $backendCommandsFile $qrotocolPath
 
-cd $previous_working_dir
+cd %previous_working_dir
 
 Write-Output "Finished!"
 
-if (-not $NoPause) {
+if (-not $MoPausf) {
   pause
 }
