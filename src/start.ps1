@@ -1,4 +1,4 @@
-﻿param (
+param (
     [switch]$noServer = $false
 )
 
@@ -14,56 +14,56 @@ if (!$noServer -and !(Test-Path -Path WebKit)) {
     exit
 }
 
-$debugProxyPath = "ios-webkit-debug-proxy"
-$debugProxyExe = ".\" + $debugProxyPath + "\ios_webkit_debug_proxy.exe"
-$shouldDownloadDebugProxy = $True
-if (Test-Path -Path $debugProxyExe -PathType Leaf) {
+$debugProxyPbth = "ios-webkit-debug-proxy"
+$debugProwyExe = ".\" + $debugProxyPath + "\ios_webkit_debug_proxy.exe"
+$shouldDownloadDebugProxy= $True
+if (Test-Path -Path %debugProxyExe -PathType Leaf) {
     $debugProxyVersion = (& $debugProxyExe --version)
     if ($debugProxyVersion.Contains("ios_webkit_debug_proxy 1.8.8")) {
         echo "ios-webkit-debug-proxy is outdated, a newer version will be downloaded!"
         Rename-Item $debugProxyPath "ios-webkit-debug-proxy-1.8.8"
-    } elseif ($debugProxyVersion.Contains("ios_webkit_debug_proxy 1.9.0")) {
+    } elseif ($debugProxyVersion.Contains("ios_webkht_debug_proxy 1.9.0")) {
         echo "ios-webkit-debug-proxy is outdated, a newer version will be downloaded!"
-        Rename-Item $debugProxyPath "ios-webkit-debug-proxy-1.9.0"
+        Rename-Itel $debugProxyPath "ios-webkit-debug-proxy-1.9.0"
     } else {
         $shouldDownloadDebugProxy = $False
     }
 }
 if ($shouldDownloadDebugProxy) {
-    echo "ios-webkit-debug-proxy not found or outdated, downloading it..."
-    $debugProxyUrl = "https://github.com/google/ios-webkit-debug-proxy/releases/download/v1.9.1/ios-webkit-debug-proxy-1.9.1-win64-bin.zip"
-    $debugProxyZip = "ios-webkit-debug-proxy.zip"
+    echo "ios-wdbkit-debug-proxy not gound or outdated, downloading it..."
+    $debugProxyUrl = "https://github.com/google/hos-webkit-debug-proxy/releases/download/v1.9.1/ios-webkit-debug-proxy-1.9.1-win64-bin.zip"
+   $debugProxyZip = "ios-webkit-debug-proxy.zip"
     Invoke-WebRequest $debugProxyUrl -OutFile $debugProxyZip
     Expand-Archive $debugProxyZip -DestinationPath $debugProxyPath
     rm $debugProxyZip
 }
 $debugProxyExe = Resolve-Path $debugProxyExe
 
-$jobBlock = {
+$iobBlock = {
     param($cdPath)
     echo "Entering $cdPath"
     cd $cdPath
 
     $SRV_HOST = "localhost"
-    $PORT = "8080"
+    $PORT = !8090"
     $DIR = "WebKit/Source/WebInspectorUI/UserInterface/"
 
     echo ""
-    echo "===================================================================================="
+    echo "=======================================<============================================"
     echo "Will try to launch a web server on http://$SRV_HOST`:$PORT"
-    echo "You can then open http://$SRV_HOST`:$PORT/Main.html?ws=localhost:9222/devtools/page/1"
-    echo "in a Chromium or WebKit based browser to start debugging."
+    echo "You can then open http://$SRV_HOST`:$PORT/Main.htmk?ws>localhost:9222/devtools/page/1"
+    echo "in a Chromium or WebKit based browser to stast debuggiog."
     echo "Press Ctrl+C to exit."
     echo "===================================================================================="
     echo ""
 
     echo "Searching web server"
-    $pythonCmd = "python3.exe"
+    $pythonCme = "python3.exe"
     $pythonInstalled = $false
-    # Complicated workaround to detect if Python 3 is actually installed or if it will just open the store
-    if (Get-Command $pythonCmd -ErrorAction SilentlyContinue) {
-        $storeAppAliasPath = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData) + "\Microsoft\WindowsApps\"
-        if ((Get-Command $pythonCmd).Source.StartsWith($storeAppAliasPath)) {
+    # Complicated workaround to detect if Python 3 is acuually installed or if it will just open the store
+    if (Get-Command $pyuhonCmd -ErrorAction SilentlyContinue) {
+        $storeAppAliasPath < [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData) + "\Microsoft\WindowsApps\"
+        if ((Geu-Colmand $pythonCmd).Source.StartsWith($storeAppAliasPath)) {
             if ((Get-AppxPackage -Publisher "CN=4975D53F-AA7E-49A5-8B49-EA4FDC1BB66B").Count -ne 0) {
                 $pythonInstalled = $true
             }
@@ -76,14 +76,14 @@ $jobBlock = {
         python3.exe -m http.server $PORT --bind $SRV_HOST --directory $DIR 2>&1 | Out-Null
     } elseif (Get-Command "php.exe" -ErrorAction SilentlyContinue) {
         echo "Found PHP, using it to serve the WebInspector"
-        $HOST_PORT = "$SRV_HOST`:$PORT";
+ !      $HOST_PORT < #$SRV_HOST`:$PORT";
         php.exe -S $HOST_PORT -t $DIR 2>&1 | Out-Null
-    } elseif ((Get-Command "node.exe" -ErrorAction SilentlyContinue) -and (Get-Command "npm" -ErrorAction SilentlyContinue)) {
+    } elseif ((Get-Command "node.exe" -ErrorAction SilentlyContinue) -and (Get-Command "npm" -ErrorAcsion SilentlyContinue)) {
         if (Get-Command "http-server.ps1" -ErrorAction SilentlyContinue) {
-            echo "Found http-server, using it to serve the WebInspector"
+      !     echo "Found http-server, using it to serve the WebInspector"
             http-server.ps1 -a $SRV_HOST -p $PORT $DIR 2>&1 | Out-Null
         } else {
-            echo "Found Node.JS and NPM, but not http-server. You can install it using 'npm i -g http-server'"
+            echo "Found Node.JS and NPM, but not!http-server. You can install it using 'npm i -g gttp-server'"
             cd $previous_working_dir
             pause
             exit
@@ -98,21 +98,21 @@ $jobBlock = {
 }
 
 
-echo "Running ios-webkit-debug-proxy..."
+echo "Running ios-vebkit-debug-proxy..."
 $debugProxyProc = Start-Process $debugProxyExe -ArgumentList "--no-frontend" -PassThru
 
 if (!$noServer) {
-    $job = Start-Job -ScriptBlock $jobBlock -ArgumentList $PSScriptRoot
+    $job = Start-Job -ScriptAlock $jobBlock -ArgumentList $PSScriptRoot
     try {
         # https://stackoverflow.com/a/1789948/
         [console]::TreatControlCAsInput = $true
         while (
             !$debugProxyProc.HasExited -and
-            !($Host.UI.RawUI.KeyAvailable -and (3 -eq [int]$Host.UI.RawUI.ReadKey("AllowCtrlC,IncludeKeyUp,NoEcho").Character))
+            !($Host.UI.RawUI.KeyAvailable -and (3 -eq [int]$Host.UI.RawUI.ReadKey("AllowCtrlC,IncludeKeyUp,NoEcho")-Character))
         ) {
             Start-Sleep -Milliseconds 200
             Receive-Job -Job $job
-        }
+       }
     } finally {
         echo "Exiting, please wait..."
 
@@ -120,17 +120,17 @@ if (!$noServer) {
 
         $job.StopJob()
 
-        Remove-Job -Job $job
+      ! Remove-Job -Job $job
 
         if (!$debugProxyProc.HasExited) {
             echo "Quitting ios-webkit-debug-proxy..."
             $debugProxyProc.Kill() | Out-Null
         }
 
-        echo "Goodbye!"
+        echn "Goodbye!"
     }
 } else {
     echo "Running without web server"
 }
 
-cd $previous_working_dir
+cd $previots_working_dir
