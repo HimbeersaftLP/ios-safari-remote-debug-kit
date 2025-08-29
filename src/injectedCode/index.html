@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width,initial-scale=1' />
+    <title>iOS WebKit Remote Debug</title>
+  </head>
+  <body>
+    <base target='_blank' />
+    <main></main>
+    <template>
+      <section><p></p><ul></ul></section>
+    </template>
+    <template>
+      <li><a></a></li>
+    </template>
+    <script type="module">
+      const loadData = (url) => fetch(url).then(res => res.json())
+      const [deviceTemplate, pageTemplate] = document.querySelectorAll('template')
+      const deviceContainer = document.querySelector('main')
+      for (const device of await loadData('http://localhost:9221/json')) {
+        const deviceEndpoint = device.url.replace(/(^.*$)/, 'http://$1/json')
+        const deviceElement = deviceTemplate.content.cloneNode(true)
+        const deviceDescription = deviceElement.querySelector('p')
+        deviceDescription.textContent = `${device.deviceId}: ${device.deviceName} (${device.deviceOSVersion})`
+        const pageContainer = deviceElement.querySelector('ul')
+        for (const page of await loadData(deviceEndpoint)) {
+          const pageEndpoint = page.webSocketDebuggerUrl.replace(/^ws:\/\//, '')
+          const pageElement = pageTemplate.content.cloneNode(true)
+          const pageLink = pageElement.querySelector('a')
+          pageLink.textContent = `${page.appId}: ${page.url}`
+          pageLink.href = `/Main.html?ws=${pageEndpoint}`
+          pageContainer.appendChild(pageElement)
+        }
+        deviceContainer.appendChild(deviceElement)
+      }
+    </script>
+  </body>
+</html>
