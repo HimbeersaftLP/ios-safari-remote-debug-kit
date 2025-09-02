@@ -15,7 +15,7 @@ Having trouble getting this tool running? Join the Discord community:
 ## Requirements for running
 
 - [`ios-webkit-debug-proxy`](https://github.com/google/ios-webkit-debug-proxy)
-  - On Windows, it will automatically be downloaded, but you must **also install and trust the device in iTunes for it to work**
+  - On Windows, it will automatically be downloaded, but you must **also install and trust the device in Apple Devices (formerly in iTunes) for it to work**
   - For Linux, please follow the [installation instructions](https://github.com/google/ios-webkit-debug-proxy#linux).
 - [Node.JS http-server](https://www.npmjs.com/package/http-server) **or** [Python](https://www.microsoft.com/store/productId/9P7QFQMJRFP7) **or** [PHP](https://www.php.net/)
   - If you have Python or PHP on your system, you don't need to change anything
@@ -43,7 +43,7 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 ### Running
 
 1. Plug your iOS device into your PC via USB
-2. On Windows, open iTunes and mark the iOS device as trusted (pop-up asks for confirmation the first time you connect a new device)
+2. On Windows, open Apple Devices (formerly iTunes) and mark the iOS device as trusted (pop-up asks for confirmation the first time you connect a new device)
 3. On the iOS device, confirm that you trust the connection if asked
 4. Go to `Settings->Safari->Advanced->Web Inspector` and enable it
 5. Open the website you want to debug in Safari
