@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>iOS Safari Inspector</title>
+    <style>
+    :root {
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --error-bg: #fee2e2;
+      --error-text: #b91c1c;
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #f5f7fb 0%, #e0e5f3 55%, #cbd5f5 100%);
+      background-attachment: fixed;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: clamp(1.5rem, 4vw, 3rem);
+    }
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    p {
+      margin: 0 0 1.25rem;
+      color: #475569;
+    }
+    .status {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: #e2e8f0;
+      color: var(--text-primary);
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+    .status.error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+    .device-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .device {
+      padding: 1.25rem;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(248, 250, 252, 0.95);
+    }
+    .device h2 {
+      margin: 0 0 0.8rem;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .device h2 .serial {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .device ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .device ul li a {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      text-decoration: none;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.97);
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    .device ul li a .page-id {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-left: 1rem;
+    }
+    .device ul li a:hover, .device ul li a:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+    }
+    .placeholder {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .placeholder.error {
+      color: var(--error-text);
+    }
+    .refresh-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.97);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    .refresh-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+    }
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>iOS Safari Inspector<button id="refresh" class="refresh-btn" onclick="load()" disabled>Refresh</button></h1>
+      <section id="status" class="status">Loading device list…</section>
+      <div id="devices" class="device-list"></div>
+    </main>
+
+    <script>
+    const HOSTNAME = location.hostname || '127.0.0.1';
+    const BASE_URL = `http://${HOSTNAME}`;
+    const DEVICE_LIST_ENDPOINT = `${BASE_URL}:9221/`;
+
+    const status = document.getElementById('status');
+    const devices = document.getElementById('devices');
+    const refreshBtn = document.getElementById('refresh');
+    let retryTimeout = null;
+
+    const escapeHTML = value =>
+      value
+        ? value.replace(
+            /[&<>"']/g,
+            char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[char])
+          )
+        : '';
+
+    async function get(url) {
+      console.log('[Inspector] Requesting', url);
+      const response = await fetch(url);
+      if (!response.ok)
+        throw new Error(`${url} returned HTTP ${response.status}`);
+      return new DOMParser().parseFromString(await response.text(), 'text/html');
+    }
+
+    async function load() {
+      if (retryTimeout) {
+        clearTimeout(retryTimeout);
+        retryTimeout = null;
+      }
+      refreshBtn.disabled = true;
+
+      try {
+        const doc = await get(DEVICE_LIST_ENDPOINT);
+        const deviceItems = doc.querySelectorAll('ol li');
+        if (!deviceItems.length)
+          throw new Error('No devices reported.');
+
+        const list = await Promise.all(
+          Array.from(deviceItems).map(async (li, i) => {
+            const anchors = li.querySelectorAll('a');
+            const endpointAnchor = Array.from(anchors).find(a => a.href);
+            const nameAnchor = anchors[anchors.length - 1] || endpointAnchor;
+            const name = (nameAnchor?.textContent || nameAnchor?.title || `Device ${i + 1}`).trim();
+            const serial = nameAnchor?.title?.trim() || '';
+            const href = endpointAnchor?.href;
+
+            if (!href)
+              return { name, serial, pages: [], error: 'Device currently unavailable.' };
+
+            try {
+              const url = new URL(href, BASE_URL);
+              url.hostname = HOSTNAME;
+              const deviceDoc = await get(url.toString());
+              const port = url.port || '80';
+              const wsHost = `${HOSTNAME}:${port}`;
+              const pages = Array.from(deviceDoc.querySelectorAll('ol li')).map((li, i) => {
+                const anchor = li.querySelector('a');
+                const pageId = Number(li.getAttribute('value')) || i + 1;
+                const title = (anchor?.textContent || anchor?.href || `Page ${pageId}`).trim();
+                return { title, pageId, link: `Main.html?ws=${wsHost}/devtools/page/${pageId}` };
+              }).filter(p => p.title);
+              return { name, serial, pages, error: '' };
+            } catch (error) {
+              return { name, serial, pages: [], error: error.message || 'Failed to load pages.' };
+            }
+          })
+        );
+
+        status.hidden = true;
+        status.classList.remove('error');
+        devices.innerHTML = list.map(({ name, serial, pages, error }) => {
+          const serialHtml = serial ? `<span class="serial">${escapeHTML(serial)}</span>` : '';
+          let content;
+          if (error)
+            content = `<p class="placeholder error">${escapeHTML(error)}</p>`;
+          else if (!pages.length)
+            content = '<p class="placeholder">No pages reported.</p>';
+          else {
+            content = `<ul>${
+              pages.map(({ title, pageId, link }) =>
+                `<li><a href="${link}" target="_blank" rel="noopener noreferrer">
+                              <span>${escapeHTML(title)}</span>
+                              <span class="page-id">page ${pageId}</span>
+                          </a></li>`
+              ).join('')
+            }</ul>`;
+          }
+          return `<section class="device"><h2>${escapeHTML(name)}${serialHtml}</h2>${content}</section>`;
+        }).join('');
+        refreshBtn.disabled = false;
+      } catch (error) {
+        status.hidden = false;
+        status.textContent = 'Failed to load inspectable pages. Retrying…';
+        status.classList.add('error');
+        devices.innerHTML = '';
+        console.error(error);
+        retryTimeout = setTimeout(load, 2000);
+      }
+    }
+
+    load();
+    </script>
+  </body>
+</html>

@@ -11,26 +11,37 @@ cd "$SCRIPT_DIR"
 arg="${1:-}"
 shift || true
 
-if [ "$arg" != "-noServer" ] && [ ! -d "WebKit" ]; then
-  echo "WebKit folder doesn't exists!"
-  echo "Run 'generate.sh' to get the needed files."
+function fail_with_prompt() {
+  for msg in "$@"; do
+    echo "$msg"
+  done
   read -p "Press enter to close this window!"
-  exit
+  exit 1
+}
+
+DEBUG_PROXY_PID=""
+
+function cleanup() {
+  if [ -n "$DEBUG_PROXY_PID" ] && kill -0 "$DEBUG_PROXY_PID" >/dev/null 2>&1; then
+    echo "Quitting $DEBUG_PROXY_EXE..."
+    kill "$DEBUG_PROXY_PID" >/dev/null 2>&1 || true
+    wait "$DEBUG_PROXY_PID" 2>/dev/null || true
+  fi
+}
+
+if [ "$arg" != "-noServer" ] && [ ! -d "WebKit" ]; then
+  fail_with_prompt \
+    "WebKit folder doesn't exists!" \
+    "Run 'generate.sh' to get the needed files."
 fi
 
 DEBUG_PROXY_EXE="ios_webkit_debug_proxy"
 
 if [ "$arg" != "-noServer" ]; then
-  echo "Running ios-webkit-debug-proxy..."
+  echo "Running $DEBUG_PROXY_EXE..."
   $DEBUG_PROXY_EXE --no-frontend &
-
-  # https://rimuhosting.com/knowledgebase/linux/misc/trapping-ctrl-c-in-bash
-  trap ctrl_c INT
-
-  function ctrl_c() {
-    echo "Quitting ios-webkit-debug-proxy..."
-    killall $DEBUG_PROXY_EXE
-  }
+  DEBUG_PROXY_PID=$!
+  trap cleanup EXIT
 
   HOST="${WEBINSPECTOR_HOST:-localhost}"
   PORT="${WEBINSPECTOR_PORT:-8080}"
@@ -39,14 +50,28 @@ if [ "$arg" != "-noServer" ]; then
   echo ""
   echo "===================================================================================="
   echo "Will try to launch a web server on http://$HOST:$PORT"
-  echo "You can then open http://$HOST:$PORT/Main.html?ws=localhost:9222/devtools/page/1"
-  echo "in a Chromium or WebKit based browser to start debugging."
+  echo "You can then open http://$HOST:$PORT/ in a Chromium or WebKit based browser"
+  echo "to pick a device + page, or open http://$HOST:$PORT/Main.html?ws=localhost:9222/devtools/page/1"
+  echo "directly if you already know the page ID."
   echo "Press Ctrl+C to exit."
   echo "===================================================================================="
   echo ""
 
   echo "Searching web server"
-  if command -v python3; then
+  if command -v busybox >/dev/null 2>&1; then
+    SERVE_HOST="$HOST"
+    if ! [[ "$HOST" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+      SERVE_HOST=""
+      if command -v getent >/dev/null 2>&1; then
+        SERVE_HOST="$(getent ahostsv4 "$HOST" | awk 'NR==1 {print $1; exit}')"
+      fi
+      if [[ -z "$SERVE_HOST" ]]; then
+        fail_with_prompt "Failed to resolve $HOST to an IP address for busybox httpd."
+      fi
+    fi
+    echo "Resolved $HOST to $SERVE_HOST for busybox httpd"
+    busybox httpd -v -f -p $SERVE_HOST:$PORT -h $DIR
+  elif command -v python3; then
     echo "Found Python 3, using it to serve the WebInspector"
     python3 -m http.server $PORT --bind $HOST --directory $DIR
   elif command -v php; then
@@ -57,15 +82,13 @@ if [ "$arg" != "-noServer" ]; then
       echo "Found http-server, using it to serve the WebInspector"
       http-server -a $HOST -p $PORT $DIR
     else
-      echo "Found Node.JS and NPM, but not http-server. You can install it using 'npm i -g http-server'"
-      read -p "Press enter to close this window!"
-      exit
+      fail_with_prompt \
+        "Found Node.JS and NPM, but not http-server. You can install it using 'npm i -g http-server'"
     fi
   else
-    echo "No compatible web server found!"
-    echo "Please either install Python 3, PHP or Node.JS or run with the argument -noServer and use one of your choice."
-    read -p "Press enter to close this window!"
-    exit
+    fail_with_prompt \
+      "No compatible web server found!" \
+      "Please either install Python 3, PHP or Node.JS or run with the argument -noServer and use one of your choice."
   fi
 else
   echo "Running without web server"

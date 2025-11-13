@@ -49,8 +49,9 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 5. Open the website you want to debug in Safari
 6. On Windows, run `start.ps1`. On Linux, run `start.sh`. Make sure your iOS device's screen is unlocked.
 7. The `ios-webkit-debug-proxy` will show your iOS device's name as connected.
-8. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
-    - If you have mutliple pages open or extensions installed, refer to [http://localhost:9222/](http://localhost:9222/) for the page number that is at the end of the URL
+8. Then open the Chromium or WebKit-based browser of your choice at [`http://localhost:8080/`](http://localhost:8080/) to see the list of connected devices and their pages (each entry links to the correct `Main.html?ws=...` URL).
+    - If you already know the page ID you want, you can still open it directly via [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
+    - If you have multiple pages open or extensions installed, refer to [http://localhost:9222/](http://localhost:9222/) for the page number that goes at the end of the URL
 9. You should be greeted with the WebInspector and can now debug to your heart's content.
 
 ### Troubleshooting
