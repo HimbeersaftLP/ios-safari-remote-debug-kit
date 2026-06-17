@@ -64,7 +64,7 @@ $jobBlock = {
     if (Get-Command $pythonCmd -ErrorAction SilentlyContinue) {
         $storeAppAliasPath = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData) + "\Microsoft\WindowsApps\"
         if ((Get-Command $pythonCmd).Source.StartsWith($storeAppAliasPath)) {
-            if ((Get-AppxPackage -Publisher "CN=4975D53F-AA7E-49A5-8B49-EA4FDC1BB66B").Count -ne 0) {
+            if ([int](powershell.exe -NoProfile -Command "(Get-AppxPackage -Publisher 'CN=4975D53F-AA7E-49A5-8B49-EA4FDC1BB66B' | Measure-Object).Count") -ne 0) {
                 $pythonInstalled = $true
             }
         } else {
