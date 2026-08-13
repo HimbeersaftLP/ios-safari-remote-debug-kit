@@ -49,12 +49,13 @@ This will result in the folder `WebKit` being created inside `src`. It contains 
 5. Open the website you want to debug in Safari
 6. On Windows, run `start.ps1`. On Linux, run `start.sh`. Make sure your iOS device's screen is unlocked.
 7. The `ios-webkit-debug-proxy` will show your iOS device's name as connected.
-8. Then open the Chromium or WebKit based browser of your choice with the following URL: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1)
-    - If you have mutliple pages open or extensions installed, refer to [http://localhost:9222/](http://localhost:9222/) for the page number that is at the end of the URL
+8. Then open [`http://localhost:8080/`](http://localhost:8080/) in the Chromium or WebKit based browser of your choice and click the page you want to debug
+    - This overview page requires `ios-webkit-debug-proxy` v1.9.2 or newer. With an older version, open the inspector directly instead: [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/1), looking up the page number at the end of the URL at [http://localhost:9222/](http://localhost:9222/)
 9. You should be greeted with the WebInspector and can now debug to your heart's content.
 
 ### Troubleshooting
 
+- If [http://localhost:8080/](http://localhost:8080/) says `Could not load http://localhost:9221/`, your `ios-webkit-debug-proxy` is older than v1.9.2, which [added the CORS headers](https://github.com/google/ios-webkit-debug-proxy/pull/418) the page needs. Use the direct URL from step 8 instead.
 - If you get an error like `Uncaught (in promise) Error: 'Browser' domain was not found` from `Connection.js:162` you are trying to inspect a page that is not inspectable  (this could be caused by having Safari extensions installed). Refer to [http://localhost:9222/](http://localhost:9222/) for the available pages and put the correct one at the end of the URL (for example [`http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/2`](http://localhost:8080/Main.html?ws=localhost:9222/devtools/page/2)) for inspecting the second page.
 - In case your inspector window stays empty, open the dev tools of your local browser to check the console for errors.
   - If you get an error like `WebSocket connection to 'ws://localhost:9222/devtools/page/1' failed:` from `BrowserInspectorFrontendHost.js:97`, try unplugging your device and plugging it back in while the site you want to debug is open in Safari. Once you see the ios-webkit-debug-proxy console window display a message like `Connected :9222 to Himbeers iPad (...)`, refresh the inspector page inside your browser (do not use the refresh button on the inspector page, refresh the entire site from your browser).

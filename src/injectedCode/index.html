@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width,initial-scale=1' />
+    <title>iOS WebKit Remote Debug</title>
+  </head>
+  <body>
+    <base target='_blank' />
+    <p><button type='button'>Reload</button></p>
+    <main>Loading…</main>
+    <template>
+      <section><p></p><ul></ul></section>
+    </template>
+    <template>
+      <li><a></a></li>
+    </template>
+    <template>
+      <section>
+        <p>Could not load <a href='http://localhost:9221/'>http://localhost:9221/</a> - <small></small></p>
+        <p>
+          A CORS error means <code>ios-webkit-debug-proxy</code> is older than v1.9.2.
+          Open that page directly to look up the port of your device and the page number, then debug via
+          <a href='/Main.html?ws=localhost:9222/devtools/page/1'>/Main.html?ws=localhost:9222/devtools/page/1</a>.
+        </p>
+      </section>
+    </template>
+    <script type="module">
+      const loadData = (url) => fetch(url).then(res => res.json())
+      const [deviceTemplate, pageTemplate, errorTemplate] = document.querySelectorAll('template')
+      const deviceContainer = document.querySelector('main')
+      const load = async () => {
+        deviceContainer.replaceChildren('Loading…')
+        try {
+          const deviceElements = document.createDocumentFragment()
+          for (const device of await loadData('http://localhost:9221/json')) {
+            const deviceEndpoint = device.url.replace(/(^.*$)/, 'http://$1/json')
+            const deviceElement = deviceTemplate.content.cloneNode(true)
+            const deviceDescription = deviceElement.querySelector('p')
+            deviceDescription.textContent = `${device.deviceId}: ${device.deviceName} (${device.deviceOSVersion})`
+            const pageContainer = deviceElement.querySelector('ul')
+            for (const page of await loadData(deviceEndpoint)) {
+              const pageEndpoint = page.webSocketDebuggerUrl.replace(/^ws:\/\//, '')
+              const pageElement = pageTemplate.content.cloneNode(true)
+              const pageLink = pageElement.querySelector('a')
+              pageLink.textContent = `${page.appId}: ${page.url}`
+              pageLink.href = `/Main.html?ws=${pageEndpoint}`
+              pageContainer.appendChild(pageElement)
+            }
+            deviceElements.appendChild(deviceElement)
+          }
+          deviceContainer.replaceChildren(deviceElements)
+        } catch (error) {
+          const errorElement = errorTemplate.content.cloneNode(true)
+          errorElement.querySelector('small').textContent = error
+          deviceContainer.replaceChildren(errorElement)
+        }
+      }
+      document.querySelector('button').addEventListener('click', load)
+      await load()
+    </script>
+  </body>
+</html>
